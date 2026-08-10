@@ -1,0 +1,23 @@
+# Python bytecode & environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Git & IDEs
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Testing & Artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local raw dataset & docs
+data/
+*.xlsx
+context.md
