@@ -15,9 +15,9 @@ ENV/
 htmlcov/
 
 # Machine Learning & Data Output Artifacts
-models/*.joblib
 data/processed_returns.csv
 data/raw_returns.csv
+
 
 # IDEs & OS
 .vscode/

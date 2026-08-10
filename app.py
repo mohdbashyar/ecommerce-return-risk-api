@@ -194,57 +194,105 @@ if predict_btn:
             tier = result["risk_tier"]
             factors = result["risk_factors"]
             recommendation = result["recommendation"]
-
-            st.subheader("📊 Risk Assessment Results")
-
-            m1, m2, m3 = st.columns(3)
-
-            with m1:
-                st.metric(label="Risk Score", value=f"{score} / 100")
-
-            with m2:
-                st.metric(label="Return Probability", value=f"{prob * 100:.1f}%")
-
-            with m3:
-                if tier == "High Risk":
-                    st.markdown(f'<div class="badge-high">🔴 Risk Tier: {tier}</div>', unsafe_allow_html=True)
-                elif tier == "Medium Risk":
-                    st.markdown(f'<div class="badge-medium">🟡 Risk Tier: {tier}</div>', unsafe_allow_html=True)
-                else:
-                    st.markdown(f'<div class="badge-low">🟢 Risk Tier: {tier}</div>', unsafe_allow_html=True)
-
-            st.write("")
-            st.write("**Return Probability Progress Gauge:**")
-            st.progress(float(prob))
-
-            st.markdown("---")
-
-            col_left, col_right = st.columns(2)
-
-            with col_left:
-                st.subheader("🔍 Identified Risk Drivers")
-                for factor in factors:
-                    st.markdown(f"- {factor}")
-
-            with col_right:
-                st.subheader("⚡ Automated Business Action Trigger")
-                if tier == "High Risk":
-                    st.error(f"**Recommended Action:**\n\n{recommendation}")
-                elif tier == "Medium Risk":
-                    st.warning(f"**Recommended Action:**\n\n{recommendation}")
-                else:
-                    st.success(f"**Recommended Action:**\n\n{recommendation}")
-
         else:
             st.error(f"Error from API ({response.status_code}): {response.text}")
+            st.stop()
 
     except requests.exceptions.ConnectionError:
-        st.error(
-            f"❌ Unable to connect to backend at `{api_url}`. "
-            "Please ensure the FastAPI server is running with `uvicorn src.main:app --reload`."
-        )
+        # Fallback to local model pipeline if backend server is not running
+        import os, joblib, pandas as pd
+        model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'pipeline.joblib')
+        
+        if os.path.exists(model_path):
+            st.info("ℹ️ Running inference using embedded standalone ML model pipeline.")
+            try:
+                pipeline = joblib.load(model_path)
+                input_df = pd.DataFrame([{
+                    "product_category": category,
+                    "price": price,
+                    "seller_rating": seller_rating,
+                    "customer_tenure_days": int(customer_tenure),
+                    "previous_returns_count": int(previous_returns),
+                    "is_prime_member": 1 if is_prime else 0,
+                    "quantity": int(quantity),
+                    "shipping_type": shipping_type,
+                    "discount_applied": float(discount_applied)
+                }])
+                prob = float(pipeline.predict_proba(input_df)[0, 1])
+                score = int(round(prob * 100))
+                tier = "High Risk" if prob >= 0.65 else ("Medium Risk" if prob >= 0.35 else "Low Risk")
+                
+                # Risk Drivers
+                factors = []
+                if previous_returns >= 2:
+                    factors.append(f"High customer previous return history ({previous_returns} past returns)")
+                if category == "Clothing":
+                    factors.append("Category 'Clothing' has higher baseline size/fit return likelihood")
+                elif category == "Electronics":
+                    factors.append("Category 'Electronics' has higher technical spec return likelihood")
+                if seller_rating < 3.8:
+                    factors.append(f"Low seller rating ({seller_rating:.1f}/5.0) correlates with item mismatch")
+                if discount_applied >= 0.15:
+                    factors.append(f"Heavy discount applied ({discount_applied*100:.0f}%) increases impulse return probability")
+                if not factors:
+                    factors.append("Standard order metrics with low risk indicator profile")
+                    
+                recommendation = (
+                    "High Risk: Display size-fit warning before checkout & offer instant exchange incentive."
+                    if prob >= 0.65 else
+                    ("Medium Risk: Highlight clear return policy details & prompt for option confirmation." if prob >= 0.35 else "Low Risk: Standard checkout approved.")
+                )
+            except Exception as ex:
+                st.error(f"Error executing embedded model: {ex}")
+                st.stop()
+        else:
+            st.error(f"❌ Backend offline at `{api_url}` and embedded model artifact not found.")
+            st.stop()
     except Exception as e:
         st.error(f"Unexpected error: {str(e)}")
+        st.stop()
+
+    # Render Results UI
+    st.subheader("📊 Risk Assessment Results")
+
+    m1, m2, m3 = st.columns(3)
+
+    with m1:
+        st.metric(label="Risk Score", value=f"{score} / 100")
+
+    with m2:
+        st.metric(label="Return Probability", value=f"{prob * 100:.1f}%")
+
+    with m3:
+        if tier == "High Risk":
+            st.markdown(f'<div class="badge-high">🔴 Risk Tier: {tier}</div>', unsafe_allow_html=True)
+        elif tier == "Medium Risk":
+            st.markdown(f'<div class="badge-medium">🟡 Risk Tier: {tier}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="badge-low">🟢 Risk Tier: {tier}</div>', unsafe_allow_html=True)
+
+    st.write("")
+    st.write("**Return Probability Progress Gauge:**")
+    st.progress(float(prob))
+
+    st.markdown("---")
+
+    col_left, col_right = st.columns(2)
+
+    with col_left:
+        st.subheader("🔍 Identified Risk Drivers")
+        for factor in factors:
+            st.markdown(f"- {factor}")
+
+    with col_right:
+        st.subheader("⚡ Automated Business Action Trigger")
+        if tier == "High Risk":
+            st.error(f"**Recommended Action:**\n\n{recommendation}")
+        elif tier == "Medium Risk":
+            st.warning(f"**Recommended Action:**\n\n{recommendation}")
+        else:
+            st.success(f"**Recommended Action:**\n\n{recommendation}")
+
 
 # Footer
 st.markdown("---")
