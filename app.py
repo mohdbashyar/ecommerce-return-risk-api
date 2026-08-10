@@ -4,13 +4,93 @@ import requests
 st.set_page_config(
     page_title="E-Commerce Return Risk Analyzer",
     page_icon="🛒",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-st.title("🛒 E-Commerce Product Return Risk Analyzer")
+# Custom Dark Theme CSS Styling
+st.markdown("""
+    <style>
+    /* Dark Theme Background & Fonts */
+    .stApp {
+        background-color: #0F172A;
+        color: #F8FAFC;
+    }
+    
+    /* Sleek Dark Cards */
+    div[data-testid="stMetric"] {
+        background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 16px 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    div[data-testid="stMetric"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(108, 92, 231, 0.25);
+    }
+    
+    /* Header Gradient Accent */
+    .header-title {
+        background: linear-gradient(90deg, #A855F7 0%, #6366F1 50%, #3B82F6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+        font-size: 2.4rem;
+        margin-bottom: 0.2rem;
+    }
+
+    /* Subtitle text */
+    .header-subtitle {
+        color: #94A3B8;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Custom Risk Badges */
+    .badge-high {
+        background-color: rgba(239, 68, 68, 0.15);
+        border: 1px solid #EF4444;
+        color: #FCA5A5;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-align: center;
+    }
+    .badge-medium {
+        background-color: rgba(245, 158, 11, 0.15);
+        border: 1px solid #F59E0B;
+        color: #FDE68A;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-align: center;
+    }
+    .badge-low {
+        background-color: rgba(16, 185, 129, 0.15);
+        border: 1px solid #10B981;
+        color: #6EE7B7;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    /* Sidebar Styling */
+    section[data-testid="stSidebar"] {
+        background-color: #1E293B !important;
+        border-right: 1px solid #334155;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Main Header
+st.markdown('<div class="header-title">🛒 E-Commerce Product Return Risk Analyzer</div>', unsafe_allow_html=True)
 st.markdown(
-    "Predict return probability for e-commerce order payloads using real-time machine learning inference, "
-    "risk score tiering, and automated business recommendations."
+    '<div class="header-subtitle">Real-time machine learning decision engine for return probability evaluation, '
+    'risk tiering, and automated business triggers.</div>',
+    unsafe_allow_html=True
 )
 
 st.sidebar.header("⚙️ Order Configuration & Inputs")
@@ -84,7 +164,7 @@ customer_tenure = st.sidebar.number_input(
 
 is_prime = st.sidebar.checkbox("Is Prime Member", value=True)
 
-# Main action area
+# Main Action Area
 st.markdown("---")
 col_submit, _ = st.columns([2, 5])
 with col_submit:
@@ -127,14 +207,14 @@ if predict_btn:
 
             with m3:
                 if tier == "High Risk":
-                    st.error(f"🔴 Tier: **{tier}**")
+                    st.markdown(f'<div class="badge-high">🔴 Risk Tier: {tier}</div>', unsafe_allow_html=True)
                 elif tier == "Medium Risk":
-                    st.warning(f"🟡 Tier: **{tier}**")
+                    st.markdown(f'<div class="badge-medium">🟡 Risk Tier: {tier}</div>', unsafe_allow_html=True)
                 else:
-                    st.success(f"🟢 Tier: **{tier}**")
+                    st.markdown(f'<div class="badge-low">🟢 Risk Tier: {tier}</div>', unsafe_allow_html=True)
 
-            # Progress Gauge
-            st.write("**Return Probability Score:**")
+            st.write("")
+            st.write("**Return Probability Progress Gauge:**")
             st.progress(float(prob))
 
             st.markdown("---")
