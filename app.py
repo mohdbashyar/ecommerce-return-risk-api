@@ -486,4 +486,5 @@ function updateUI(data, payload) {
 """
 
 # Render full screen Google Stitch template in Streamlit
-components.html(STITCH_HTML, height=1000, scrolling=True)
+st.html(STITCH_HTML)
+
