@@ -28,8 +28,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Google Stitch HTML + JS Template
-STITCH_HTML = """
+# Custom Web Frontend Template
+INDEX_HTML = """
 <!DOCTYPE html>
 <html class="light" lang="en">
 <head>
@@ -485,6 +485,6 @@ function updateUI(data, payload) {
 </html>
 """
 
-# Render full screen Google Stitch template in Streamlit
-st.html(STITCH_HTML)
+# Render web interface in Streamlit
+st.html(INDEX_HTML)
 

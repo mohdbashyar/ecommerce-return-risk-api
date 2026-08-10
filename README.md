@@ -49,7 +49,7 @@ ecommerce-return-risk-api/
 ├── .dockerignore                   # Docker build exclusions
 ├── .gitignore                      # Git tracking exclusions
 ├── requirements.txt                # Python package dependencies
-└── README.md                       # High-impact documentation
+└── README.md                       # Project documentation
 ```
 
 ---
