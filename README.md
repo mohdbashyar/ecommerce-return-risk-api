@@ -11,6 +11,16 @@ An end-to-end Machine Learning microservice and decision engine that predicts pr
 
 ---
 
+## 🎥 Project Demo
+
+Watch a quick 30-second demonstration of the engine in action:
+
+<video src="project-demo.mp4" controls="controls" width="100%">
+  Your browser does not support the video tag.
+</video>
+
+---
+
 ## 🏗️ System Architecture
 
 ```mermaid
