@@ -15,9 +15,7 @@ An end-to-end Machine Learning microservice and decision engine that predicts pr
 
 Watch a quick 30-second demonstration of the engine in action:
 
-<video src="project-demo.mp4" controls="controls" width="100%">
-  Your browser does not support the video tag.
-</video>
+https://github.com/mohdbashyar/ecommerce-return-risk-api/raw/main/project-demo.mp4
 
 ---
 
