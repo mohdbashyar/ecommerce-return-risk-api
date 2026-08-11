@@ -15,7 +15,7 @@ An end-to-end Machine Learning microservice and decision engine that predicts pr
 
 Watch a quick 30-second demonstration of the engine in action:
 
-https://github.com/user-attachments/assets/6ffaefd4-54b9-4a6c-bec2-0387d24a5bbf
+https://github.com/user-attachments/assets/dec84bc4-5fab-4d8d-b089-8dc47f16f03e
 
 ---
 
